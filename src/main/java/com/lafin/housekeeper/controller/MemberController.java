@@ -3,6 +3,7 @@ package com.lafin.housekeeper.controller;
 import com.lafin.housekeeper.constant.Result;
 import com.lafin.housekeeper.dto.Message;
 import com.lafin.housekeeper.dto.request.MemberJoinRequest;
+import com.lafin.housekeeper.io.ResponseUtils;
 import com.lafin.housekeeper.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -22,16 +23,9 @@ public class MemberController {
 
     @GetMapping("/list")
     public ResponseEntity<Message> list() {
-        var message = new Message();
         var memberList = memberService.list();
-        var headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        message.setStatus(Result.OK);
-        message.setMessage("회원 목록");
-        message.setData(memberList);
-
-        return new ResponseEntity<>(message, headers, HttpStatus.OK);
+        return ResponseUtils.success("회원 목록 조회 성공", memberList);
     }
 
     @PostMapping("/join")

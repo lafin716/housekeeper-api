@@ -1,17 +1,13 @@
 package com.lafin.housekeeper.controller;
 
-import com.lafin.housekeeper.constant.Result;
 import com.lafin.housekeeper.dto.Message;
 import com.lafin.housekeeper.dto.request.HouseAddRequest;
+import com.lafin.housekeeper.dto.request.HouseModifyRequest;
+import com.lafin.housekeeper.io.ResponseUtils;
 import com.lafin.housekeeper.service.HouseService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.nio.charset.Charset;
 
 @RestController
 @RequestMapping("/api/house")
@@ -22,28 +18,29 @@ public class HouseController {
 
     @GetMapping("/list")
     public ResponseEntity<Message> list() {
-        var message = new Message();
-        var headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
         var houseList = houseService.list();
 
-        message.setStatus(Result.OK);
-        message.setData(houseList);
-
-        return new ResponseEntity<Message>(message, headers, HttpStatus.OK);
+        return ResponseUtils.success("집 목록 조회", houseList);
     }
 
     @PostMapping("/add")
     public ResponseEntity<Message> add(@RequestBody HouseAddRequest houseAddRequest) {
-        var message = new Message();
-        var headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
         var house = houseService.add(houseAddRequest);
 
-        message.setStatus(Result.OK);
-        message.setData(house);
+        return ResponseUtils.success("집 추가 성공", house);
+    }
 
-        return new ResponseEntity<Message>(message, headers, HttpStatus.OK);
+    @PutMapping("/modify/{houseId}")
+    public ResponseEntity<Message> add(@PathVariable Long houseId, @RequestBody HouseModifyRequest houseModifyRequest) {
+        var house = houseService.modify(houseId, houseModifyRequest);
+
+        return ResponseUtils.success("집 수정 성공", house);
+    }
+
+    @DeleteMapping("/delete/{houseId}")
+    public ResponseEntity<Message> add(@PathVariable Long houseId) {
+        houseService.delete(houseId);
+
+        return ResponseUtils.success("집 삭제 성공");
     }
 }
