@@ -1,6 +1,7 @@
 package com.lafin.housekeeper.service;
 
 import com.lafin.housekeeper.dto.request.ProductAddRequest;
+import com.lafin.housekeeper.dto.request.ProductModifyRequest;
 import com.lafin.housekeeper.dto.request.RoomAddRequest;
 import com.lafin.housekeeper.entity.Product;
 import com.lafin.housekeeper.entity.Room;
@@ -30,5 +31,20 @@ public class ProductService {
         product.setOrderCount(productAddRequest.getOrderCount());
 
         return productRepository.save(product);
+    }
+
+    public Product modify(Long productId, ProductModifyRequest productModifyRequest) {
+        var product = new Product();
+        product.setId(productId);
+        product.setName(productModifyRequest.getName());
+        product.setCount(productModifyRequest.getCount());
+        product.setMinimumCount(productModifyRequest.getMinimumCount());
+        product.setOrderCount(productModifyRequest.getOrderCount());
+
+        return productRepository.save(product);
+    }
+
+    public void delete(Long productId) {
+        productRepository.deleteById(productId);
     }
 }

@@ -1,9 +1,9 @@
-package com.lafin.housekeeper.controller;
+package com.lafin.housekeeper.controller.api;
 
 import com.lafin.housekeeper.constant.Result;
 import com.lafin.housekeeper.dto.Message;
-import com.lafin.housekeeper.dto.request.HouseAddRequest;
-import com.lafin.housekeeper.dto.request.RoomAddRequest;
+import com.lafin.housekeeper.dto.request.*;
+import com.lafin.housekeeper.io.ResponseUtils;
 import com.lafin.housekeeper.service.HouseService;
 import com.lafin.housekeeper.service.RoomService;
 import lombok.RequiredArgsConstructor;
@@ -25,29 +25,30 @@ public class RoomController {
 
     @GetMapping("/list")
     public ResponseEntity<Message> list() {
-        var message = new Message();
-        var headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
         var roomList = roomService.list();
 
-        message.setStatus(Result.OK);
-        message.setData(roomList);
-
-        return new ResponseEntity<Message>(message, headers, HttpStatus.OK);
+        return ResponseUtils.success("방 수정 성공", roomList);
     }
 
     @PostMapping("/add")
     public ResponseEntity<Message> add(@RequestBody RoomAddRequest roomAddRequest) {
-        var message = new Message();
-        var headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
         var room = roomService.add(roomAddRequest);
 
-        message.setStatus(Result.OK);
-        message.setData(room);
+        return ResponseUtils.success("방 수정 성공", room);
+    }
 
-        return new ResponseEntity<Message>(message, headers, HttpStatus.OK);
+    @PutMapping("/modify/{roomId}")
+    public ResponseEntity<Message> add(@PathVariable Long roomId, @RequestBody RoomModifyRequest roomModifyRequest) {
+        var room = roomService.modify(roomId, roomModifyRequest);
+
+        return ResponseUtils.success("방 수정 성공", room);
+    }
+
+    @DeleteMapping("/delete/{roomId}")
+    public ResponseEntity<Message> add(@PathVariable Long roomId) {
+        roomService.delete(roomId);
+
+        return ResponseUtils.success("방 삭제 성공");
     }
 }
 

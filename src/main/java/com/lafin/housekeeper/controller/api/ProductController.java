@@ -1,9 +1,12 @@
-package com.lafin.housekeeper.controller;
+package com.lafin.housekeeper.controller.api;
 
 import com.lafin.housekeeper.constant.Result;
 import com.lafin.housekeeper.dto.Message;
+import com.lafin.housekeeper.dto.request.HouseModifyRequest;
 import com.lafin.housekeeper.dto.request.ProductAddRequest;
+import com.lafin.housekeeper.dto.request.ProductModifyRequest;
 import com.lafin.housekeeper.dto.request.RoomAddRequest;
+import com.lafin.housekeeper.io.ResponseUtils;
 import com.lafin.housekeeper.service.ProductService;
 import com.lafin.housekeeper.service.RoomService;
 import lombok.RequiredArgsConstructor;
@@ -24,28 +27,29 @@ public class ProductController {
 
     @GetMapping("/list")
     public ResponseEntity<Message> list() {
-        var message = new Message();
-        var headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
         var productList = productService.list();
 
-        message.setStatus(Result.OK);
-        message.setData(productList);
-
-        return new ResponseEntity<Message>(message, headers, HttpStatus.OK);
+        return ResponseUtils.success("물건 수정 성공", productList);
     }
 
     @PostMapping("/add")
     public ResponseEntity<Message> add(@RequestBody ProductAddRequest productAddRequest) {
-        var message = new Message();
-        var headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
         var product = productService.add(productAddRequest);
 
-        message.setStatus(Result.OK);
-        message.setData(product);
+        return ResponseUtils.success("물건 수정 성공", product);
+    }
 
-        return new ResponseEntity<Message>(message, headers, HttpStatus.OK);
+    @PutMapping("/modify/{productId}")
+    public ResponseEntity<Message> add(@PathVariable Long productId, @RequestBody ProductModifyRequest houseModifyRequest) {
+        var house = productService.modify(productId, houseModifyRequest);
+
+        return ResponseUtils.success("물건 수정 성공", house);
+    }
+
+    @DeleteMapping("/delete/{productId}")
+    public ResponseEntity<Message> add(@PathVariable Long productId) {
+        productService.delete(productId);
+
+        return ResponseUtils.success("물건 삭제 성공");
     }
 }

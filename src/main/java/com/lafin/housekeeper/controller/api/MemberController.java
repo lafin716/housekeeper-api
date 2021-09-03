@@ -1,4 +1,4 @@
-package com.lafin.housekeeper.controller;
+package com.lafin.housekeeper.controller.api;
 
 import com.lafin.housekeeper.constant.Result;
 import com.lafin.housekeeper.dto.Message;
