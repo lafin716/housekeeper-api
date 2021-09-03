@@ -46,6 +46,13 @@ public class ProductController {
         return ResponseUtils.success("물건 수정 성공", house);
     }
 
+    @PutMapping("/use/{productId}")
+    public ResponseEntity<Message> use(@PathVariable Long productId) throws Exception {
+        var house = productService.useProduct(productId);
+
+        return ResponseUtils.success("물건 수정 성공", house);
+    }
+
     @DeleteMapping("/delete/{productId}")
     public ResponseEntity<Message> add(@PathVariable Long productId) {
         productService.delete(productId);

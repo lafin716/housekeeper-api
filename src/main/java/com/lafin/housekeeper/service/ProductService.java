@@ -1,5 +1,6 @@
 package com.lafin.housekeeper.service;
 
+import com.lafin.housekeeper.constant.ProductStatus;
 import com.lafin.housekeeper.dto.request.ProductAddRequest;
 import com.lafin.housekeeper.dto.request.ProductModifyRequest;
 import com.lafin.housekeeper.dto.request.RoomAddRequest;
@@ -8,6 +9,7 @@ import com.lafin.housekeeper.entity.Room;
 import com.lafin.housekeeper.repository.ProductRepository;
 import com.lafin.housekeeper.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,6 +45,32 @@ public class ProductService {
 
         return productRepository.save(product);
     }
+
+    public ProductStatus getProductCountStatus(int productCount, int productMinimumCount) throws Exception {
+        if (productCount < 0) return ProductStatus.EMPTY;
+        if (productCount <= productMinimumCount) return ProductStatus.WARN;
+
+        return ProductStatus.STABLE;
+    }
+
+    public Product useProduct(Long productId) throws Exception {
+        var product = productRepository.findById(productId)
+                .orElseThrow(() -> new Exception("물건 정보를 찾을 수 없습니다."));
+
+        int remainProductCount = product.getCount() - 1;
+        int minimumProductCount = product.getMinimumCount();
+        var productStatus = getProductCountStatus(remainProductCount, minimumProductCount);
+
+        if (productStatus == ProductStatus.EMPTY) {
+
+        }
+
+        product.setCount(remainProductCount);
+
+        return productRepository.save(product);
+    }
+
+
 
     public void delete(Long productId) {
         productRepository.deleteById(productId);
