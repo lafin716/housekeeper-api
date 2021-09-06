@@ -5,7 +5,6 @@ import com.lafin.housekeeper.dto.Message;
 import com.lafin.housekeeper.dto.Token;
 import com.lafin.housekeeper.dto.request.MemberJoinRequest;
 import com.lafin.housekeeper.dto.request.MemberLoginRequest;
-import com.lafin.housekeeper.dto.request.OAuthAuthorizeRequest;
 import com.lafin.housekeeper.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
