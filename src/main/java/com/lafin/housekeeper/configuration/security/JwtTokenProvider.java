@@ -1,20 +1,19 @@
 package com.lafin.housekeeper.configuration.security;
 
-import com.lafin.housekeeper.entity.Member;
-import com.lafin.housekeeper.service.MemberService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -23,14 +22,19 @@ import java.util.List;
 @Component
 public class JwtTokenProvider {
 
-    private String key = "lafin";
+    @Value("${jwt.tokenKey}")
+    private String tokenKey;
+
+    @Value("${jwt.secret}")
+    private String secret;
 
     private long tokenValidTime = 30 * 60 * 1000L;
 
     private final UserDetailsService userDetailsService;
 
+    @PostConstruct
     protected void init() {
-        key = Base64.getEncoder().encodeToString(key.getBytes());
+        secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
     public String createToken(String id, List<String> roles) {
@@ -42,26 +46,26 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + tokenValidTime))
-                .signWith(SignatureAlgorithm.HS256, key)
+                .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
 
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getId(token));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(getEmail(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String getId(String token) {
-        return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().getSubject();
+    public String getEmail(String token) {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }
 
     public String resolveToken(HttpServletRequest request) {
-        return request.getHeader("X-AUTH-TOKEN");
+        return request.getHeader(tokenKey);
     }
 
     public boolean validateToken(String jwtToken) {
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(key).parseClaimsJws(jwtToken);
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
             return false;

@@ -19,6 +19,7 @@ server:
   port: 8080
 logging:
   level:
-    root: info
+    root: debug
 jwt:
+  tokenKey: X-AUTH-TOKEN
   secret: SECRET_KEY
