@@ -5,6 +5,7 @@ import com.lafin.housekeeper.dto.Message;
 import com.lafin.housekeeper.dto.Token;
 import com.lafin.housekeeper.dto.request.MemberJoinRequest;
 import com.lafin.housekeeper.dto.request.MemberLoginRequest;
+import com.lafin.housekeeper.io.ResponseUtils;
 import com.lafin.housekeeper.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -24,16 +25,9 @@ public class OAuthController {
 
     @PostMapping("/join")
     public ResponseEntity<Message> join(@RequestBody MemberJoinRequest memberJoinRequest) {
-        var message = new Message();
         var member = memberService.join(memberJoinRequest);
-        var headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        message.setStatus(Result.OK);
-        message.setMessage("회원 가입 성공");
-        message.setData(member);
-
-        return new ResponseEntity<>(message, headers, HttpStatus.OK);
+        return ResponseUtils.success("회원 가입 성공", member);
     }
 
     @PostMapping("/login")
