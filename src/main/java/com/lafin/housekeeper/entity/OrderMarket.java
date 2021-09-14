@@ -2,10 +2,7 @@ package com.lafin.housekeeper.entity;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,5 +21,6 @@ public class OrderMarket extends BaseEntity {
 
     private String name;
 
+    @Column(columnDefinition = "TEXT")
     private String url;
 }

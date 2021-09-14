@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class JwtTokenProvider {
 
     @Value("${jwt.tokenKey}")
@@ -65,7 +67,11 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String jwtToken) {
         try {
+            log.info("secret : {}", secret);
             Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken);
+            log.info("header : {}", claims.getHeader());
+            log.info("body : {}", claims.getBody());
+            log.info("sig : {}", claims.getSignature());
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
             return false;

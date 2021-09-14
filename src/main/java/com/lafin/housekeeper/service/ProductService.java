@@ -3,13 +3,9 @@ package com.lafin.housekeeper.service;
 import com.lafin.housekeeper.constant.ProductStatus;
 import com.lafin.housekeeper.dto.request.ProductAddRequest;
 import com.lafin.housekeeper.dto.request.ProductModifyRequest;
-import com.lafin.housekeeper.dto.request.RoomAddRequest;
 import com.lafin.housekeeper.entity.Product;
-import com.lafin.housekeeper.entity.Room;
 import com.lafin.housekeeper.repository.ProductRepository;
-import com.lafin.housekeeper.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +13,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProductService {
+
+    private final OrderService orderService;
+
+    private final OrderMarketService orderMarketService;
 
     private final ProductRepository productRepository;
 
@@ -46,13 +46,6 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public ProductStatus getProductCountStatus(int productCount, int productMinimumCount) throws Exception {
-        if (productCount < 0) return ProductStatus.EMPTY;
-        if (productCount <= productMinimumCount) return ProductStatus.WARN;
-
-        return ProductStatus.STABLE;
-    }
-
     public Product useProduct(Long productId) throws Exception {
         var product = productRepository.findById(productId)
                 .orElseThrow(() -> new Exception("물건 정보를 찾을 수 없습니다."));
@@ -61,16 +54,25 @@ public class ProductService {
         int minimumProductCount = product.getMinimumCount();
         var productStatus = getProductCountStatus(remainProductCount, minimumProductCount);
 
-        if (productStatus == ProductStatus.EMPTY) {
-
-        }
-
+        // 사용처리
         product.setCount(remainProductCount);
+        orderService.addUseLog(product);
+
+        // 재고가 없거나 위험 상태 일 떄 주문 처리
+        if (productStatus == ProductStatus.EMPTY || productStatus == ProductStatus.WARN) {
+            orderMarketService.doOrder(product);
+            product.setCount(remainProductCount + product.getOrderCount());
+        }
 
         return productRepository.save(product);
     }
 
+    public ProductStatus getProductCountStatus(int productCount, int productMinimumCount) throws Exception {
+        if (productCount <= 0) return ProductStatus.EMPTY;
+        if (productCount <= productMinimumCount) return ProductStatus.WARN;
 
+        return ProductStatus.STABLE;
+    }
 
     public void delete(Long productId) {
         productRepository.deleteById(productId);

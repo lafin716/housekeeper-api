@@ -29,14 +29,14 @@ public class ProductController {
     public ResponseEntity<Message> list() {
         var productList = productService.list();
 
-        return ResponseUtils.success("물건 수정 성공", productList);
+        return ResponseUtils.success("물건 목록 조회 성공", productList);
     }
 
     @PostMapping("/add")
     public ResponseEntity<Message> add(@RequestBody ProductAddRequest productAddRequest) {
         var product = productService.add(productAddRequest);
 
-        return ResponseUtils.success("물건 수정 성공", product);
+        return ResponseUtils.success("물건 추가 성공", product);
     }
 
     @PutMapping("/modify/{productId}")
@@ -50,7 +50,7 @@ public class ProductController {
     public ResponseEntity<Message> use(@PathVariable Long productId) throws Exception {
         var house = productService.useProduct(productId);
 
-        return ResponseUtils.success("물건 수정 성공", house);
+        return ResponseUtils.success("물건 사용처리 성공", house);
     }
 
     @DeleteMapping("/delete/{productId}")

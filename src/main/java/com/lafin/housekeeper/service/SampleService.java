@@ -1,9 +1,6 @@
 package com.lafin.housekeeper.service;
 
-import com.lafin.housekeeper.dto.request.HouseAddRequest;
-import com.lafin.housekeeper.dto.request.MemberJoinRequest;
-import com.lafin.housekeeper.dto.request.ProductAddRequest;
-import com.lafin.housekeeper.dto.request.RoomAddRequest;
+import com.lafin.housekeeper.dto.request.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,15 +22,21 @@ public class SampleService {
 
     private final ProductService productService;
 
+    private final OrderMarketService orderMarketService;
+
     @PostConstruct
     public void initDatas() {
         var memberId = addMember();
         var houseId = addHouse(memberId, "기본집");
         var roomId1 = addRoom(houseId, "큰방");
-        addProduct(roomId1, "물티슈");
-        addProduct(roomId1, "스킨");
-        addProduct(roomId1, "로션");
-        addProduct(roomId1, "썬크림");
+
+        var product1 = addProduct(roomId1, "물티슈");
+        var product2 = addProduct(roomId1, "스킨");
+        var product3 = addProduct(roomId1, "로션");
+        var product4 = addProduct(roomId1, "썬크림");
+
+        addOrderMarket(product1, "쿠팡", "https://www.coupang.com/vp/products/227369485?itemId=720332517&vendorItemId=3091339209&sourceType=srp_product_ads&clickEventId=675b298c-7d6b-4931-a2d7-6d97194cd7bb&korePlacement=15&koreSubPlacement=1&q=%EB%AC%BC%ED%8B%B0%EC%8A%88&itemsCount=36&searchId=50dd1be109ef4385942c3ffdfb494880&rank=0&isAddedCart=");
+        addOrderMarket(product2, "쿠팡", "https://www.coupang.com/vp/products/265626118?itemId=832679356&vendorItemId=5120021806&sourceType=srp_product_ads&clickEventId=d1420e23-bd9f-46e5-908c-734a7db41035&korePlacement=15&koreSubPlacement=1&q=%EC%97%AC%EC%9E%90+%EC%8A%A4%ED%82%A8%EB%A1%9C%EC%85%98&itemsCount=36&searchId=9edefd840a9344258c3d04d848ebabcb&rank=0&isAddedCart=");
 
         var roomId2 = addRoom(houseId, "작은방");
         addProduct(roomId2, "티슈");
@@ -91,11 +94,21 @@ public class SampleService {
         var productAddRequest = new ProductAddRequest();
         productAddRequest.setRoomId(roomId);
         productAddRequest.setName(name);
-        productAddRequest.setCount(100);
+        productAddRequest.setCount(35);
         productAddRequest.setMinimumCount(5);
         productAddRequest.setOrderCount(30);
         var product = productService.add(productAddRequest);
 
         return product.getId();
+    }
+
+    // 물건 마켓 세팅
+    public Long addOrderMarket(Long productId, String name, String url) {
+        var orderAddRequest = new OrderMarketAddRequest();
+        orderAddRequest.setName(name);
+        orderAddRequest.setUrl(url);
+
+        var orderMarket = orderMarketService.addMarket(productId, orderAddRequest);
+        return orderMarket.getId();
     }
 }
