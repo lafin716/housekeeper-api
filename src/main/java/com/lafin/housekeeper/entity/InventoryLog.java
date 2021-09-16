@@ -27,7 +27,7 @@ public class InventoryLog extends BaseEntity {
 
     private String productName;
 
-    private Integer remainCount;
+    private Integer remainStock;
 
-    private Integer changeCount;
+    private Integer changeStock;
 }

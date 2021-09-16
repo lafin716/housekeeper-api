@@ -1,6 +1,6 @@
 package com.lafin.housekeeper.constant;
 
-public enum Result {
+public enum Result implements EnumMessage {
     OK(200, "OK"),
     BAD_REQUEST(400, "BAD_REQUEST"),
     NOT_FOUND(404, "NOT_FOUND"),
@@ -8,10 +8,21 @@ public enum Result {
 
     int statusCode;
 
-    String code;
+    String message;
 
-    Result(int statusCode, String code) {
+    Result(int statusCode, String message) {
         this.statusCode = statusCode;
-        this.code = code;
+        this.message = message;
+    }
+
+
+    @Override
+    public String getCode() {
+        return new StringBuilder().append(this.statusCode).toString();
+    }
+
+    @Override
+    public String getMessage() {
+        return this.message;
     }
 }

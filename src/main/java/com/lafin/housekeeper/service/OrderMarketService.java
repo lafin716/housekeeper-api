@@ -16,14 +16,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderMarketService {
 
-    private final OrderService orderService;
-
     private final OrderMarketRepository orderMarketRepository;
 
     public List<OrderMarket> getMarketList(Long productId) {
         var result = orderMarketRepository.findOrderMarketByProductId(productId);
-
         return result;
+    }
+
+    public String getFirstMarketUrl(Long productId) {
+        var market = orderMarketRepository.findFirstByProductIdOrderByCreatedAsc(productId);
+        return market.getUrl();
     }
 
     public OrderMarket addMarket(Long productId, OrderMarketAddRequest orderMarketAddRequest) {
@@ -49,14 +51,5 @@ public class OrderMarketService {
         orderMarketRepository.deleteById(marketId);
     }
 
-    public void doOrder(Product product) {
-        var marketList = getMarketList(product.getId());
 
-        // 차례로 주문 처리할 때 하나라도 성공하면 종료
-        for (OrderMarket orderMarket : marketList) {
-            if (orderService.order(product, orderMarket)) {
-                break;
-            }
-        }
-    }
 }

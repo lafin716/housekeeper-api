@@ -25,9 +25,9 @@ public class Product extends BaseEntity {
 
     private String name;
 
-    private Integer count;
+    private Integer stock;
 
-    private Integer orderCount;
+    private Integer orderStock;
 
-    private Integer minimumCount;
+    private Integer minimumStock;
 }

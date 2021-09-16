@@ -36,6 +36,7 @@ public class SampleService {
         var product4 = addProduct(roomId1, "썬크림");
 
         addOrderMarket(product1, "쿠팡", "https://www.coupang.com/vp/products/227369485?itemId=720332517&vendorItemId=3091339209&sourceType=srp_product_ads&clickEventId=675b298c-7d6b-4931-a2d7-6d97194cd7bb&korePlacement=15&koreSubPlacement=1&q=%EB%AC%BC%ED%8B%B0%EC%8A%88&itemsCount=36&searchId=50dd1be109ef4385942c3ffdfb494880&rank=0&isAddedCart=");
+        addOrderMarket(product1, "아마존", "https://amazon.com");
         addOrderMarket(product2, "쿠팡", "https://www.coupang.com/vp/products/265626118?itemId=832679356&vendorItemId=5120021806&sourceType=srp_product_ads&clickEventId=d1420e23-bd9f-46e5-908c-734a7db41035&korePlacement=15&koreSubPlacement=1&q=%EC%97%AC%EC%9E%90+%EC%8A%A4%ED%82%A8%EB%A1%9C%EC%85%98&itemsCount=36&searchId=9edefd840a9344258c3d04d848ebabcb&rank=0&isAddedCart=");
 
         var roomId2 = addRoom(houseId, "작은방");
